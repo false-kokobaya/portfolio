@@ -46,7 +46,6 @@ function openLink(item: { projectUrl?: string; githubUrl?: string }) {
 .works__grid {
   display: grid;
   gap: 1.5rem;
-  margin-top: 1rem;
 }
 
 @media (min-width: 640px) {
@@ -56,60 +55,59 @@ function openLink(item: { projectUrl?: string; githubUrl?: string }) {
 }
 
 .work-card {
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   cursor: pointer;
-  transition: box-shadow 0.2s, transform 0.2s;
-  background: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  background: var(--color-bg-card);
 }
 
 .work-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
 }
 
 .work-card__thumb {
   aspect-ratio: 400 / 240;
   overflow: hidden;
-  background: #f1f5f9;
+  background: var(--color-border-soft);
 }
 
 .work-card__thumb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.work-card:hover .work-card__thumb img {
+  transform: scale(1.03);
 }
 
 .work-card__body {
-  padding: 1rem;
+  padding: 1.25rem;
 }
 
 .work-card__title {
+  font-family: var(--font-heading);
   font-size: 1.125rem;
   font-weight: 600;
-  color: #1a1a2e;
-  margin-bottom: 0.25rem;
+  color: var(--color-text);
+  margin-bottom: 0.35rem;
 }
 
 .work-card__desc {
   font-size: 0.875rem;
-  color: #64748b;
-  line-height: 1.5;
+  color: var(--color-text-muted);
+  line-height: 1.6;
 }
 
 .work-card__hint {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   margin-top: 0.5rem;
-}
-
-.section-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1a1a2e;
-  padding-bottom: 0.5rem;
-  border-bottom: 3px solid #3b82f6;
-  margin-bottom: 0.5rem;
+  opacity: 0.8;
 }
 </style>

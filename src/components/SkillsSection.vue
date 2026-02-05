@@ -29,19 +29,26 @@ const skills = [
 .skills__list {
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.75rem;
 }
 
 .skills__item {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  background: #f1f5f9;
-  border-radius: 8px;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   font-weight: 500;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.skills__item:hover {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .skills__icon {
@@ -49,15 +56,6 @@ const skills = [
 }
 
 .skills__name {
-  color: #334155;
-}
-
-.section-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1a1a2e;
-  padding-bottom: 0.5rem;
-  border-bottom: 3px solid #3b82f6;
-  margin-bottom: 0.5rem;
+  color: var(--color-text);
 }
 </style>

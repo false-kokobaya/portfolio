@@ -35,10 +35,10 @@ const googleFormEmbedUrl = ''
 
 <style scoped>
 .contact__embed {
-  margin-top: 1rem;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   overflow: hidden;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
 }
 
 .contact__embed iframe {
@@ -46,12 +46,11 @@ const googleFormEmbedUrl = ''
 }
 
 .contact__placeholder {
-  margin-top: 1rem;
-  padding: 2rem;
-  background: #f8fafc;
-  border: 1px dashed #cbd5e1;
-  border-radius: 8px;
-  color: #64748b;
+  padding: 2.5rem;
+  background: var(--color-bg-card);
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
   text-align: center;
 }
 
@@ -61,21 +60,14 @@ const googleFormEmbedUrl = ''
   max-width: 480px;
   margin-left: auto;
   margin-right: auto;
+  line-height: 1.6;
 }
 
 .contact__placeholder code {
-  background: #e2e8f0;
-  padding: 0.15em 0.4em;
-  border-radius: 4px;
+  background: var(--color-accent-light);
+  color: var(--color-accent-hover);
+  padding: 0.2em 0.5em;
+  border-radius: var(--radius-sm);
   font-size: 0.9em;
-}
-
-.section-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1a1a2e;
-  padding-bottom: 0.5rem;
-  border-bottom: 3px solid #3b82f6;
-  margin-bottom: 0.5rem;
 }
 </style>
