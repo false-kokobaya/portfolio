@@ -3,13 +3,16 @@
  * ルートコンポーネント（縦長1ページのポートフォリオ全体）
  * 固定ヘッダーのナビから各セクションへスムーズスクロールする。
  * スクロール量に応じて背景レイヤーが動くパララックス効果あり。
+ * 仕掛け: ランプクリックでダークモード切替
  */
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import HeroSection from './components/HeroSection.vue'
 import AboutSection from './components/AboutSection.vue'
 import SkillsSection from './components/SkillsSection.vue'
 import WorksSection from './components/WorksSection.vue'
 import ContactSection from './components/ContactSection.vue'
+
+const STORAGE_KEY_THEME = 'portfolio-theme'
 
 // ナビの項目（id は各セクションの id と一致させる）
 const navItems = [
@@ -34,8 +37,39 @@ function onScroll() {
   scrollY.value = window.scrollY
 }
 
+// --- 仕掛け1: ダークモード（ランプで切り替え） ---
+const isDark = ref(false)
+
+function applyTheme(dark: boolean) {
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light'
+}
+
+function toggleTheme() {
+  isDark.value = !isDark.value
+}
+
+watch(isDark, (dark) => {
+  applyTheme(dark)
+  try {
+    localStorage.setItem(STORAGE_KEY_THEME, dark ? 'dark' : 'light')
+  } catch {
+    /* ignore */
+  }
+})
+
 onMounted(() => {
   window.addEventListener('scroll', onScroll, { passive: true })
+
+  // 保存済みテーマを適用
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY_THEME) as 'dark' | 'light' | null
+    if (saved === 'dark' || saved === 'light') {
+      isDark.value = saved === 'dark'
+      applyTheme(isDark.value)
+    }
+  } catch {
+    /* ignore */
+  }
 })
 onUnmounted(() => {
   window.removeEventListener('scroll', onScroll)
@@ -65,6 +99,23 @@ onUnmounted(() => {
             </button>
           </li>
         </ul>
+        <button
+          type="button"
+          class="nav__lamp"
+          :class="{ 'nav__lamp--on': isDark }"
+          :aria-label="isDark ? 'ライトモードに切り替え' : 'ダークモードに切り替え'"
+          title="クリックで明るさを切り替え"
+          @click="toggleTheme"
+        >
+          <span class="nav__lamp-icon" aria-hidden="true">
+            <!-- ランプのアイコン（消灯時は枠線、点灯時は光る） -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18h6" />
+              <path d="M10 22h4" />
+              <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14" />
+            </svg>
+          </span>
+        </button>
       </nav>
     </header>
 
@@ -115,7 +166,7 @@ onUnmounted(() => {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(250, 250, 249, 0.9);
+  background: var(--color-header-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--color-border);
@@ -125,6 +176,10 @@ onUnmounted(() => {
   max-width: 960px;
   margin: 0 auto;
   padding: 0.875rem 1.5rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav__list {
@@ -133,6 +188,39 @@ onUnmounted(() => {
   flex-wrap: wrap;
   gap: 0.25rem 0.5rem;
   justify-content: center;
+}
+
+/* 仕掛け1: ランプ（クリックでダークモード切替） */
+.nav__lamp {
+  position: absolute;
+  right: 1.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: color 0.2s, background 0.2s, transform 0.2s;
+}
+
+.nav__lamp:hover {
+  color: var(--color-accent);
+  background: var(--color-accent-light);
+  transform: scale(1.08);
+}
+
+.nav__lamp:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.nav__lamp--on .nav__lamp-icon {
+  color: var(--color-accent);
+  filter: drop-shadow(0 0 6px var(--color-accent));
 }
 
 .nav__item {
