@@ -7,6 +7,8 @@ export interface WorkItem {
   id: string
   title: string
   description: string
+  /** 技術タグ（Vue, TypeScript など）。省略可 */
+  tags?: string[]
   thumbnailUrl?: string
   projectUrl?: string
   githubUrl?: string
@@ -18,6 +20,7 @@ export const works: WorkItem[] = [
     id: 'json-tool',
     title: 'JSON比較ツール',
     description: '2つのJSONを比較し、差分を視覚的に表示するツール。Vue + TypeScriptで作成。',
+    tags: ['Vue', 'TypeScript', 'Vite'],
     thumbnailUrl: 'https://placehold.co/400x240/1a1a2e/eee?text=JSON+Tool',
     projectUrl: '', // 公開URLがあれば設定
     githubUrl: '', // リポジトリURLを設定

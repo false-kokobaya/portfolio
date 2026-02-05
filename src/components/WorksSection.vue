@@ -33,6 +33,9 @@ function openLink(item: { projectUrl?: string; githubUrl?: string }) {
         <div class="work-card__body">
           <h3 class="work-card__title">{{ item.title }}</h3>
           <p class="work-card__desc">{{ item.description }}</p>
+          <ul v-if="item.tags?.length" class="work-card__tags">
+            <li v-for="tag in item.tags" :key="tag" class="work-card__tag">{{ tag }}</li>
+          </ul>
           <p v-if="!item.projectUrl && !item.githubUrl" class="work-card__hint">
             URLを設定してください
           </p>
@@ -102,6 +105,24 @@ function openLink(item: { projectUrl?: string; githubUrl?: string }) {
   font-size: 0.875rem;
   color: var(--color-text-muted);
   line-height: 1.6;
+}
+
+.work-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  list-style: none;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+.work-card__tag {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  background: var(--color-accent-light);
+  color: var(--color-accent-hover);
+  border-radius: var(--radius-sm);
+  font-weight: 500;
 }
 
 .work-card__hint {

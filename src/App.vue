@@ -11,8 +11,11 @@ import AboutSection from './components/AboutSection.vue'
 import SkillsSection from './components/SkillsSection.vue'
 import WorksSection from './components/WorksSection.vue'
 import ContactSection from './components/ContactSection.vue'
+import Footer from './components/Footer.vue'
 
 const STORAGE_KEY_THEME = 'portfolio-theme'
+
+const BACK_TO_TOP_THRESHOLD = 400
 
 // ナビの項目（id は各セクションの id と一致させる）
 const navItems = [
@@ -33,8 +36,11 @@ function scrollToSection(id: string) {
 const scrollY = ref(0)
 const PARALLAX_FACTOR = 0.35
 
+const showBackToTop = ref(false)
+
 function onScroll() {
   scrollY.value = window.scrollY
+  showBackToTop.value = window.scrollY > BACK_TO_TOP_THRESHOLD
 }
 
 // --- 仕掛け1: ダークモード（ランプで切り替え） ---
@@ -125,7 +131,21 @@ onUnmounted(() => {
       <SkillsSection />
       <WorksSection />
       <ContactSection />
+      <Footer />
     </main>
+
+    <!-- トップへ戻る（一定量スクロールで表示） -->
+    <Transition name="back-to-top">
+      <button
+        v-show="showBackToTop"
+        type="button"
+        class="back-to-top"
+        aria-label="ページの先頭へ戻る"
+        @click="scrollToSection('hero')"
+      >
+        <span class="back-to-top__icon" aria-hidden="true">↑</span>
+      </button>
+    </Transition>
   </div>
 </template>
 
@@ -249,5 +269,52 @@ onUnmounted(() => {
 .nav__link:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
+}
+
+/* トップへ戻るボタン */
+.back-to-top {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 90;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-md);
+  color: var(--color-accent);
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.back-to-top:hover {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.back-to-top:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.back-to-top__icon {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.back-to-top-enter-active,
+.back-to-top-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.back-to-top-enter-from,
+.back-to-top-leave-to {
+  opacity: 0;
+  transform: translateY(8px);
 }
 </style>
