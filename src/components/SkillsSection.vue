@@ -3,106 +3,184 @@
  * Skills セクション（スキル一覧）
  * ホバーでコインが1回転し、ホバーするたびにコメントが変わる。クリックで表⇔裏を切り替え。
  */
-import { ref } from 'vue'
+import { ref } from "vue";
 
 interface Skill {
-  name: string
-  icon: string
-  comments: string[]
+  name: string;
+  icon: string;
+  comments: string[];
 }
 
 const skills: Skill[] = [
-  { name: 'HTML / CSS', icon: '🌐', comments: ['普段から一番触ってます', 'レイアウトで悩むこと多め', 'Flexbox / Grid が好き'] },
-  { name: 'TypeScript', icon: '📘', comments: ['型があると安心', 'any はなるべく避けてます', 'strict で書いてます'] },
-  { name: 'Vue.js', icon: '💚', comments: ['Composition API で書くのが好き', 'このサイトも Vue で作成', 'リアクティブなUIが得意'] },
-  { name: 'Git', icon: '📦', comments: ['コミットメッセージは意識して書いてます', 'rebase も使います', 'ブランチ戦略は案件に合わせて'] },
-  { name: 'Vitest', icon: '🧪', comments: ['テスト書くように心がけてます', 'コンポーネントテストも', 'カバレッジはほどほどに'] },
-  { name: 'Vite', icon: '⚡', comments: ['爆速で開発が楽', 'Vue と相性抜群', 'ビルドも軽い'] },
-]
+  {
+    name: "Java",
+    icon: "☕",
+    comments: [
+      "型の明示と設計の見通しを意識して書くようにしています",
+      "フレームワークの規約を活かして保守しやすいコードを心がけています",
+      "テスタビリティを考えた設計で、リファクタしやすさを高めています",
+    ],
+  },
+  {
+    name: "Python",
+    icon: "🐍",
+    comments: [
+      "可読性と「書くより読む回数が多い」を前提にしています",
+      "標準ライブラリとエコシステムの豊富さで素早く検証・実装しています",
+      "型ヒントで意図を残しつつ、簡潔さのメリットも活かしています",
+    ],
+  },
+  {
+    name: "Swift",
+    icon: "🍎",
+    comments: [
+      "型安全とオプショナルを活かして、実行時エラーを減らすようにしています",
+      "プロトコル指向でテスタブルで拡張しやすい構成を意識しています",
+      "モダンな文法で読みやすく、変更に強いコードを目指しています",
+    ],
+  },
+  {
+    name: "C++",
+    icon: "⚙️",
+    comments: [
+      "メモリとライフタイムを意識して、パフォーマンスと安全性のバランスを取っています",
+      "RAII やスマートポインタでリソース管理のメリットを活かしています",
+      "必要に応じて STL を選び、再利用性と可読性を高めています",
+    ],
+  },
+  {
+    name: "Vue.js",
+    icon: "💚",
+    comments: [
+      "Composition API でロジックの再利用と関心の分離を意識しています",
+      "リアクティブな仕組みを活かして、状態の流れを追いやすい構成にしています",
+      "コンポーネントの責務を絞り、テストや変更に強くするよう心がけています",
+    ],
+  },
+  {
+    name: "TypeScript",
+    icon: "📘",
+    comments: [
+      "型で設計の意図を残し、リファクタと補完のメリットを活かしています",
+      "any を避け、必要なところだけ型を絞るようにしています",
+      "型の恩恵でバグを早く見つけ、設計の質を高めるようにしています",
+    ],
+  },
+  {
+    name: "Flutter",
+    icon: "🦋",
+    comments: [
+      "一つのコードベースで複数プラットフォームの知見を積むようにしています",
+      "ウィジェットの組み合わせと状態管理（Riverpod）で保守しやすさを意識しています",
+      "ホットリロードを活かして、試行錯誤しながら UI を詰めています",
+    ],
+  },
+  {
+    name: "HTML / CSS",
+    icon: "🌐",
+    comments: [
+      "セマンティクスとアクセシビリティを意識してマークアップしています",
+      "Flexbox / Grid を活かして、レスポンシブと保守しやすいレイアウトにしています",
+      "変数やコンポーネント的な考えで、一貫したスタイルになるよう心がけています",
+    ],
+  },
+  {
+    name: "Git",
+    icon: "📦",
+    comments: [
+      "コミットメッセージで「なぜ」が分かるようにし、履歴の価値を高めています",
+      "ブランチと rebase を用途に合わせて使い、レビューしやすい差分にしています",
+      "履歴を振り返りやすいようにして、協調開発の質を高めています",
+    ],
+  },
+];
 
 /** スキルごとの「今表示するコメント」のインデックス */
-const commentIndices = ref<number[]>(skills.map(() => 0))
+const commentIndices = ref<number[]>(skills.map(() => 0));
 
 /** 裏返っている（裏面を表示している）カードのインデックス */
-const flipped = ref<boolean[]>(skills.map(() => false))
+const flipped = ref<boolean[]>(skills.map(() => false));
 
 /** 一度カードの外に出たときだけ true。mouseenter で「ホバー」としてコメントを進めるのはこのときだけ */
-const hasLeftSinceEnter = ref<boolean[]>(skills.map(() => false))
+const hasLeftSinceEnter = ref<boolean[]>(skills.map(() => false));
 
 /** クリックで裏→表にしたカード。マウスが外に出るまでホバー1回転を出さない */
-const noHoverSpinCardIndex = ref<number | null>(null)
+const noHoverSpinCardIndex = ref<number | null>(null);
 
 /** いま1回転アニメ再生中のカードのインデックス（複数可・カーソルが外れても最後まで回る） */
-const spinningCardIndices = ref<Set<number>>(new Set())
+const spinningCardIndices = ref<Set<number>>(new Set());
 
 /** スピン終了直後、逆回転に見えないよう 0deg で固定するための一時クラス用 */
-const spinJustEndedIndex = ref<number | null>(null)
+const spinJustEndedIndex = ref<number | null>(null);
 
 function isSpinning(index: number) {
-  return spinningCardIndices.value.has(index)
+  return spinningCardIndices.value.has(index);
 }
 
 /** クリックだけ：表⇔裏の切り替え（ホバーと完全に分離） */
 function toggleFlipped(index: number) {
-  const wasFlipped = flipped.value[index]
-  flipped.value = [...flipped.value]
-  flipped.value[index] = !flipped.value[index]
+  const wasFlipped = flipped.value[index];
+  flipped.value = [...flipped.value];
+  flipped.value[index] = !flipped.value[index];
   // 裏→表にしたら、マウスがこのカードから出るまでホバー1回転を出さない
   if (wasFlipped) {
-    noHoverSpinCardIndex.value = index
+    noHoverSpinCardIndex.value = index;
   }
 }
 
 /** マウスがカードから出た → 裏のままなら表に戻す。ホバー1回転の抑制を解除し、次に入ったときにコメントを進める */
 function onMouseLeave(index: number) {
   if (flipped.value[index]) {
-    flipped.value = [...flipped.value]
-    flipped.value[index] = false
+    flipped.value = [...flipped.value];
+    flipped.value[index] = false;
   }
   if (noHoverSpinCardIndex.value === index) {
-    noHoverSpinCardIndex.value = null
+    noHoverSpinCardIndex.value = null;
   }
-  hasLeftSinceEnter.value = [...hasLeftSinceEnter.value]
-  hasLeftSinceEnter.value[index] = true
+  hasLeftSinceEnter.value = [...hasLeftSinceEnter.value];
+  hasLeftSinceEnter.value[index] = true;
 }
 
 /** マウスがカードに入った。外に出てから入ったときだけコメントを進め、1回転を開始（外れても最後まで回る） */
 function onMouseEnter(index: number) {
   if (hasLeftSinceEnter.value[index]) {
-    hasLeftSinceEnter.value = [...hasLeftSinceEnter.value]
-    hasLeftSinceEnter.value[index] = false
-    cycleComment(index)
+    hasLeftSinceEnter.value = [...hasLeftSinceEnter.value];
+    hasLeftSinceEnter.value[index] = false;
+    cycleComment(index);
   }
   if (!flipped.value[index] && noHoverSpinCardIndex.value !== index) {
-    spinningCardIndices.value = new Set([...spinningCardIndices.value, index])
+    spinningCardIndices.value = new Set([...spinningCardIndices.value, index]);
   }
 }
 
 /** 1回転アニメが終わったらクラスを外し、逆回転に見えないよう一瞬 0deg で固定 */
 function onSpinEnd(index: number) {
-  if (!spinningCardIndices.value.has(index)) return
-  spinJustEndedIndex.value = index
-  spinningCardIndices.value = new Set([...spinningCardIndices.value].filter((i) => i !== index))
+  if (!spinningCardIndices.value.has(index)) return;
+  spinJustEndedIndex.value = index;
+  spinningCardIndices.value = new Set(
+    [...spinningCardIndices.value].filter((i) => i !== index),
+  );
   setTimeout(() => {
-    spinJustEndedIndex.value = null
-  }, 0)
+    spinJustEndedIndex.value = null;
+  }, 0);
 }
 
 function cycleComment(index: number) {
-  const skill = skills[index]
-  if (!skill || skill.comments.length <= 1) return
-  commentIndices.value = [...commentIndices.value]
-  commentIndices.value[index] = (commentIndices.value[index] + 1) % skill.comments.length
+  const skill = skills[index];
+  if (!skill || skill.comments.length <= 1) return;
+  commentIndices.value = [...commentIndices.value];
+  commentIndices.value[index] =
+    (commentIndices.value[index] + 1) % skill.comments.length;
 }
 
 /** 各スキルの現在のコメント */
 function currentComment(index: number): string {
-  const skill = skills[index]
-  const i = commentIndices.value[index] ?? 0
-  return skill?.comments[i] ?? ''
+  const skill = skills[index];
+  const i = commentIndices.value[index] ?? 0;
+  return skill?.comments[i] ?? "";
 }
 
-const hasMultipleComments = (skill: Skill) => skill.comments.length > 1
+const hasMultipleComments = (skill: Skill) => skill.comments.length > 1;
 </script>
 
 <template>
@@ -121,7 +199,11 @@ const hasMultipleComments = (skill: Skill) => skill.comments.length > 1
         }"
         role="button"
         tabindex="0"
-        :aria-label="flipped[index] ? `${skill.name}。${currentComment(index)}。クリックで表に戻る` : `${skill.name}。クリックで裏面を表示、ホバーでコメントが変わります`"
+        :aria-label="
+          flipped[index]
+            ? `${skill.name}。${currentComment(index)}。クリックで表に戻る`
+            : `${skill.name}。クリックで裏面を表示、ホバーでコメントが変わります`
+        "
         @click="toggleFlipped(index)"
         @mouseenter="onMouseEnter(index)"
         @mouseleave="onMouseLeave(index)"
@@ -134,12 +216,16 @@ const hasMultipleComments = (skill: Skill) => skill.comments.length > 1
           @webkitAnimationEnd="onSpinEnd(index)"
         >
           <div class="skill-card__front">
-            <span class="skill-card__icon" aria-hidden="true">{{ skill.icon }}</span>
+            <span class="skill-card__icon" aria-hidden="true">{{
+              skill.icon
+            }}</span>
             <span class="skill-card__name">{{ skill.name }}</span>
           </div>
           <div class="skill-card__back">
             <p class="skill-card__comment">{{ currentComment(index) }}</p>
-            <p v-if="hasMultipleComments(skill)" class="skill-card__hint">ホバーで次の一言</p>
+            <p v-if="hasMultipleComments(skill)" class="skill-card__hint">
+              ホバーで次の一言
+            </p>
             <p class="skill-card__hint">クリックで表に戻る</p>
           </div>
         </div>
