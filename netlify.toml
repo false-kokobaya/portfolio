@@ -1,0 +1,10 @@
+# Netlify 用ビルド・SPA 設定（デプロイ実績あるならこれで）
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# SPA 用：すべてのパスを index.html に渡す（Vue Router などで直リンクが効く）
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
